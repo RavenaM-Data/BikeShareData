@@ -1,0 +1,64 @@
+##install packages
+
+install.packages(c("tidyverse", "readr", "lubridate", "hms", "data.table", "dplyr"))
+
+##load library
+
+library(tidyverse)
+library(lubridate) 
+library(hms)
+library(readr)
+library(data.table)
+library(dplyr)
+
+##import raw data
+
+may_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_05 clean.csv")
+june_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_06 clean.csv")
+july_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_07 clean.csv")
+aug_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_08 clean.csv")
+sep_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_09 clean.csv")
+oct_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_10 clean.csv")
+nov_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_11 clean.csv")
+dec_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_12 clean.csv")
+jan_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2023_01 clean.csv")
+feb_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2023_02 clean.csv")
+march_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2023_03 clean.csv")
+april_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2023_04 clean.csv")
+
+##combine into 1 data frame
+
+raw_bike_data <- rbind( may_2022,june_2022,july_2022,aug_2022,sep_2022,oct_2022,nov_2022,dec_2022,jan_2023,feb_2023,march_2023,april_2023)
+
+#remove the other data frames
+
+remove( may_2022,june_2022,july_2022,aug_2022,sep_2022,oct_2022,nov_2022,dec_2022,jan_2023,feb_2023,march_2023,april_2023)
+
+##create a duplicate data frame 
+
+raw_bike_df <- raw_bike_data
+
+
+-----------------------------------------
+##remove rows with NA values
+
+raw_bike_df <- na.omit(raw_bike_df) 
+
+##remove duplicate rows 
+
+raw_bike_df <- distinct(raw_bike_df)
+
+##remove where ride_length is 0 or negative
+
+raw_bike_df <- raw_bike_df%>%
+  filter(ride_time>0)
+
+------------------------------------------
+
+##new dataframe to use in export
+
+bike_tableau <- raw_bike_df
+
+##download the new data as a .csv file
+
+fwrite(bike_tableau,"bike_data.csv")
