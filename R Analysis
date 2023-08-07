@@ -96,6 +96,7 @@ dow_bike_avg_ride <- raw_bike_df %>%
   summarize(avg_ride_length = mean(ride_time))
 
 -----------------------------------------------------
+
 ##ride per month
 
 month_count <- raw_bike_df%>%
@@ -160,6 +161,7 @@ user_avg_ride <- raw_bike_df %>%
 rideable_type <- raw_bike_df %>%
   group_by(rideable_type, member_casual) %>%
   summarize(member_casual = n())
+
 ---------------------------------------------------
 
 ##how many station start
