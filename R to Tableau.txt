@@ -38,8 +38,8 @@ remove( may_2022,june_2022,july_2022,aug_2022,sep_2022,oct_2022,nov_2022,dec_202
 
 raw_bike_df <- raw_bike_data
 
-
 -----------------------------------------
+
 ##remove rows with NA values
 
 raw_bike_df <- na.omit(raw_bike_df) 
@@ -55,7 +55,7 @@ raw_bike_df <- raw_bike_df%>%
 
 ------------------------------------------
 
-##new dataframe to use in export
+##create a new dataframe to export
 
 bike_tableau <- raw_bike_df
 
