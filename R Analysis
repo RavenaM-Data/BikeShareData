@@ -13,18 +13,18 @@ library(dplyr)
 
 ##import raw data
 
-may_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2022_05-divvy-tripdata.csv")
-june_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2022_06-divvy-tripdata.csv")
-july_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2022_07-divvy-tripdata.csv")
-aug_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2022_08-divvy-tripdata.csv")
-sep_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2022_09-divvy-tripdata.csv")
-oct_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2022_10-divvy-tripdata.csv")
-nov_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2022_11-divvy-tripdata.csv")
-dec_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2022_12-divvy-tripdata.csv")
-jan_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2023_01-divvy-tripdata.csv")
-feb_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2023_02-divvy-tripdata.csv")
-march_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2023_03-divvy-tripdata.csv")
-april_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Raw Data/2023_04-divvy-tripdata.csv")
+may_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_05 clean.csv")
+june_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_06 clean.csv")
+july_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_07 clean.csv")
+aug_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_08 clean.csv")
+sep_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_09 clean.csv")
+oct_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_10 clean.csv")
+nov_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_11 clean.csv")
+dec_2022 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2022_12 clean.csv")
+jan_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2023_01 clean.csv")
+feb_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2023_02 clean.csv")
+march_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2023_03 clean.csv")
+april_2023 <- read.csv("C:/Users/Ravena_M/Desktop/DA COURSE/Final Project/Tableau Data/2023_04 clean.csv")
 
 ##combine into 1 data frame
 
@@ -38,34 +38,9 @@ remove( may_2022,june_2022,july_2022,aug_2022,sep_2022,oct_2022,nov_2022,dec_202
 
 raw_bike_df <- raw_bike_data
 
-#create a row with the ride length in minutes
-
-raw_bike_df$ride_length_mins <- difftime(raw_bike_data$ended_at, raw_bike_data$started_at, units = "mins")
 
 -----------------------------------------
 
-###default format is yyyy-mm-dd, use start date
-
-raw_bike_df$date <- as.Date(raw_bike_df$started_at)
-
-##create column for month
-
-raw_bike_df$month <- format(as.Date(raw_bike_df$started_at), "%m")
-
-##column for day of week (dow)
-
-raw_bike_df$day_of_week <- wday(raw_bike_df$started_at)
-
-##convert dow to names
-
-raw_bike_df$day_of_week <- weekdays(as.Date(raw_bike_df$day_of_week, origin = "1970-01-01"))[raw_bike_df$day_of_week]
-
-##convert month to names
-
-raw_bike_df$month <- month.name[as.numeric(format(as.Date(raw_bike_df$started_at), "%m"))]
-
-
------------------------------------------
 ##remove rows with NA values
 
 raw_bike_df <- na.omit(raw_bike_df) 
@@ -77,15 +52,9 @@ raw_bike_df <- distinct(raw_bike_df)
 ##remove where ride_length is 0 or negative
 
 raw_bike_df <- raw_bike_df%>%
-  filter(ride_length_mins>0)
+  filter(ride_time>0)
 
-##remove columns not needed: ride_id, start_station_id, end_station_id, start_lat, start_long, end_lat, end_lng
-
-raw_bike_df <- raw_bike_df %>% 
-  select(-c(ride_id, start_station_id, end_station_id,start_lat,start_lng,end_lat,end_lng)) 
-
-
----------------------------------------
+------------------------------------------
 
 ##total ride count
 
@@ -95,7 +64,7 @@ total_count <- raw_bike_df%>%
 ##average total ride length
 
 total_avg_ride <- raw_bike_df %>%
-  summarize(avg_ride_length = mean(ride_length_mins))
+  summarize(avg_ride_length = mean(ride_time))
 
 ---------------------------------------------
 
@@ -114,7 +83,7 @@ dow_ride_membership <- raw_bike_df %>%
 
 dow_user_avg_ride <- raw_bike_df %>%
   group_by(day_of_week, member_casual) %>%
-  summarize(avg_ride_length = mean(ride_length_mins))
+  summarize(avg_ride_length = mean(ride_time))
 
 ##how many rides per day, by biketype
 
@@ -126,9 +95,10 @@ dow_rideable_type <- raw_bike_df %>%
 
 dow_bike_avg_ride <- raw_bike_df %>%
   group_by(day_of_week, rideable_type) %>%
-  summarize(avg_ride_length = mean(ride_length_mins))
+  summarize(avg_ride_length = mean(ride_time))
 
 -----------------------------------------------------
+
 ##ride per month
 
 month_count <- raw_bike_df%>%
@@ -144,7 +114,7 @@ summarize(rideable_type = n())
 
 month_bike_avg_ride <- raw_bike_df %>%
   group_by(month, rideable_type) %>%
-  summarize(avg_ride_length = mean(ride_length_mins))
+  summarize(avg_ride_length = mean(ride_time))
 
 ##ride per month by usertype
 
@@ -156,7 +126,7 @@ summarize(member_casual = n())
 
 month_user_avg_ride <- raw_bike_df %>%
   group_by(month, member_casual) %>%
-  summarize(avg_ride_length = mean(ride_length_mins))
+  summarize(avg_ride_length = mean(ride_time))
 
 ##count dow per month 
 
@@ -175,9 +145,7 @@ bike_type_count <- raw_bike_df%>%
 
 bike_avg_ride <- raw_bike_df %>%
   group_by(rideable_type) %>%
-  summarize(avg_ride_length = mean(ride_length_mins))
-
---------------------------------------------------
+  summarize(avg_ride_length = mean(ride_time))
 
 ##count by usertype
 
@@ -188,54 +156,85 @@ user_type_count <- raw_bike_df%>%
 
 user_avg_ride <- raw_bike_df %>%
   group_by(member_casual) %>%
-  summarize(avg_ride_length = mean(ride_length_mins))
+  summarize(avg_ride_length = mean(ride_time))
 
 ##how many rides per bike type, by usertype
 
 rideable_type <- raw_bike_df %>%
   group_by(rideable_type, member_casual) %>%
   summarize(member_casual = n())
+
 ---------------------------------------------------
-
-##how many station start
-
-start_station_ct <- raw_bike_df%>%
-	count(start_station_name)%>%
-	arrange(desc(n))
-
-##how many station end
-
-end_station_ct <- raw_bike_df%>%
-	count(end_station_name)%>%
-	arrange(desc(n))
 
 ##start station ranking
 
 start_station_rank <- raw_bike_df %>%
   group_by(start_station_name) %>%
   summarize(count = n()) %>%
-  arrange(desc(count))
+  filter(rank(desc(pair_count))<=10)
 
 ##end station ranking
 
 end_station_rank <- raw_bike_df %>%
   group_by(end_station_name) %>%
   summarize(count = n()) %>%
-  arrange(desc(count))
+  filter(rank(desc(pair_count))<=10)
+
+##start station ranking by dow
+
+start_station_dow <- raw_bike_df %>%
+  group_by(start_station_name, day_of_week) %>%
+  summarize(count = n()) %>%
+  filter(rank(desc(pair_count))<=10)
+
+##end station ranking by dow
+
+end_station_dow <- raw_bike_df %>%
+  group_by(end_station_name, day_of_week) %>%
+  summarize(count = n()) %>%
+  filter(rank(desc(pair_count))<=10)
+
+##start station ranking by month
+
+start_station_month <- raw_bike_df %>%
+  group_by(start_station_name, month) %>%
+  summarize(count = n()) %>%
+  filter(rank(desc(pair_count))<=10)
+
+##end station ranking by month
+
+end_station_month <- raw_bike_df %>%
+  group_by(end_station_name, month) %>%
+  summarize(count = n()) %>%
+  filter(rank(desc(pair_count))<=10)
 
 ##start station ranking by usertype
 
 start_station_user <- raw_bike_df %>%
   group_by(start_station_name, member_casual) %>%
   summarize(count = n()) %>%
-  arrange(desc(count))
+  filter(rank(desc(pair_count))<=10)
 
 ##end station ranking by usertype
 
 end_station_user <- raw_bike_df %>%
   group_by(end_station_name, member_casual) %>%
   summarize(count = n()) %>%
-  arrange(desc(count))
+  filter(rank(desc(pair_count))<=10)
+
+##start station ranking by biketype
+
+start_station_bike <- raw_bike_df %>%
+  group_by(start_station_name, rideable_type) %>%
+  summarize(count = n()) %>%
+  filter(rank(desc(pair_count))<=10)
+
+##end station ranking by biketype
+
+end_station_bike <- raw_bike_df %>%
+  group_by(end_station_name, rideable type) %>%
+  summarize(count = n()) %>%
+  filter(rank(desc(pair_count))<=10)
 
 ---------------------------------------------------------------
 
@@ -252,7 +251,7 @@ start_end_month_rank <- raw_bike_df %>%
   group_by(month, start_station_name, end_station_name) %>%
   summarize(pair_count = n()) %>%
   group_by(month) %>%
-  filter(rank(desc(pair_count))<=5) %>%
+  filter(rank(desc(pair_count))<=10) %>%
   ungroup()
 
 ##start/end station pair ranking, by dow 
@@ -261,7 +260,7 @@ start_end_dow_rank <- raw_bike_df %>%
   group_by(day_of_week, start_station_name, end_station_name) %>%
   summarize(pair_count = n()) %>%
   group_by(day_of_week) %>%
-  filter(rank(desc(pair_count)) <= 5) %>%
+  filter(rank(desc(pair_count)) <= 10) %>%
   ungroup()
 
 ##start/end station pair ranking, by usertype
@@ -270,7 +269,16 @@ start_end_user <- raw_bike_df %>%
   group_by(member_casual, start_station_name, end_station_name) %>%
   summarize(pair_count = n()) %>%
   group_by(member_casual) %>%
-  filter(rank(desc(pair_count))<=5) %>%
+  filter(rank(desc(pair_count))<=10) %>%
   ungroup()
 
+
+##start/end station pair ranking, by biketype
+
+start_end_bike <- raw_bike_df %>%
+  group_by(rideable_type, start_station_name, end_station_name) %>%
+  summarize(pair_count = n()) %>%
+  group_by(rideable_type) %>%
+  filter(rank(desc(pair_count))<=10) %>%
+  ungroup()
 
